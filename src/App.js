@@ -1,26 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
+import {News} from './News';
 import './App.css';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  state = {
+    news: []
+  }
+  componentDidMount() {
+    axios.get('http://newsapi.org/v2/top-headlines?country=us&apiKey=eb3df88c77404e108b15e89561cfefd9')
+        .then(res => {
+            const news = res.data.articles;
+            this.setState({news});
+        })
+        .catch(err => {
+            console.log('Err: ', err);
+        });
+  }
+  render() {
+    return (
+        <div className="App">
+            <div className="News container">
+                <h1>Google News Feeds!</h1>
+                <section className="list-group text-center">
+                {
+                    this.state.news.map((item, index) => {
+                        return (<News {...item} key={index} />);
+                    })
+                }
+                </section>
+            </div>
+        </div>
+    )
+  }
 }
 
 export default App;
